@@ -1,11 +1,9 @@
-
-SRCS=$(wildcard *.c)
-TRGT=$(SRCS:.c=.out)
-
-
-all: ${TRGT}
-
-%.out:%.c
-	gcc $^ -o $@
+SRCS = $(wildcard *.c)
+PROGS = $(patsubst %.c,%,$(SRCS))
+CFLAGS=-g
+LDFLAGS=-pthread
+all: $(PROGS)
+%: %.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 clean:
-	rm ${TRGT}
+	rm -f $(PROGS)
