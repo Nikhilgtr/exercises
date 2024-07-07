@@ -1,20 +1,20 @@
-#include <stdio.h>
-
-#define MAX_NUMBER 100
-
+#include<stdio.h>
 int main()
 {
-
-    int num = 0, jdx = 0;
-    
-    for(num = 1; num <= MAX_NUMBER; num++) {
-
-        for(jdx = 2; jdx < num; jdx++)
+    int n,i,fact,j;
+    printf("\nPrime Numbers are: \n");
+    n = 20;
+	for(i=1; i<=n; i++)
+    {
+        fact=0;
+        for(j=1; j<=n; j++)
         {
-            if((num % jdx) == 0)
-                break;
+            if(i%j==0)
+                fact++;
         }
-        if(num == jdx)
-            printf("%d is a prime number \n",num);
+		if(fact == 2)
+            printf("%d " ,i);
     }
+    printf("\n");
+    return 0;
 }
