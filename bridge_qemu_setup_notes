@@ -7,6 +7,9 @@ IP should be set different inside qemu than host but subnet should be same
 
 Host Work
 =========
+
+add echo "allow br0" > bridge.conf in output/host/etc/ of buildroot
+
 sudo brctl addbr br0
 sudo brctl addif br0 enp0s3  # Replace enp0s3 with your network interface
 sudo ip link set up dev br0
