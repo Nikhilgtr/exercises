@@ -1,0 +1,19 @@
+
+Qemu Work
+=========
+
+Kernel driver for e1000 should be enabled
+IP should be set different inside qemu than host but subnet should be same
+
+Host Work
+=========
+sudo brctl addbr br0
+sudo brctl addif br0 enp0s3  # Replace enp0s3 with your network interface
+sudo ip link set up dev br0
+sudo ip addr add "IP" dev br0  # Adjust the IP address as needed, IP should be entered of ubuntu enp0s3 port
+
+ADD these arguements in qemu string "-netdev bridge,br=br0,id=net0 -device virtio-net-pci,netdev=net0"
+
+check for ping in qemu and ubuntu
+
+ssh root@IP for br0
