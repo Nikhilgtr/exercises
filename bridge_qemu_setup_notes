@@ -20,3 +20,45 @@ ADD these arguements in qemu string "-netdev bridge,br=br0,id=net0 -device virti
 check for ping in qemu and ubuntu
 
 ssh root@IP for br0
+
+
+#!/bin/sh
+
+ip_address=$(ifconfig enp0s3 | grep 'inet ' | awk '{print $2}')
+
+sudo brctl addbr br0 
+sudo brctl addif br0 enp0s3  # Replace enp0s3 with your network interface
+sudo ip link set up dev br0
+sudo ip addr add $ip_address/24 dev br0  # Adjust the IP address as needed
+
+
+BINARIES_DIR="${0%/*}/"
+# shellcheck disable=SC2164
+cd "${BINARIES_DIR}"
+
+mode_serial=false
+mode_sys_qemu=false
+while [ "$1" ]; do
+    case "$1" in
+    --serial-only|serial-only) mode_serial=true; shift;;
+    --use-system-qemu) mode_sys_qemu=true; shift;;
+    --) shift; break;;
+    *) echo "unknown option: $1" >&2; exit 1;; 
+    esac
+done
+
+if ${mode_serial}; then
+    EXTRA_ARGS='-nographic'
+else
+    EXTRA_ARGS='-serial stdio'
+    EXTRA_ARGS='-nographic'
+fi
+
+if ! ${mode_sys_qemu}; then
+    export PATH="/home/nik/ws/buildroot/buildroot-2024.02.6/output/host/bin:${PATH}"
+fi
+
+#exec qemu-system-x86_64 -M pc -kernel bzImage -drive file=rootfs.ext2,if=virtio,format=raw -append "rootwait root=/dev/vda console=tty1 console=ttyS0"  -net nic,model=virtio -net user  ${EXTRA_ARGS} "$@"
+exec qemu-system-x86_64 -M pc -kernel bzImage -drive file=rootfs.ext2,if=virtio,format=raw -append "rootwait root=/dev/vda console=tty1 console=ttyS0"  -netdev bridge,br=br0,id=net0 -device virtio-net-pci,netdev=net0  ${EXTRA_ARGS} "$@"
+
+
